@@ -42,7 +42,7 @@ day     = 86400     #Seconds in a day [s]
 tolclg  = 1e-4      #Tolerance before clogging to stop the simulation
 QCO2    = 4e-4      #Injection rate (CO2) [m^3/s]
 dtCO2   = 10        #Time step to print CO2 results [d]
-NCO2    = 50        #Number of time steps to run the simulation [-]
+NCO2    = 40        #Number of time steps to run the simulation [-]
 
 #Delete previous inputs and results
 os.system('rm -rf inputs & rm -rf results & wait')
@@ -61,7 +61,7 @@ H  = 30                             #Height of the domain [m]
 ht = 5                              #Height of the top aquifer [m]
 hl = 5                              #Height of the lower aquifer [m]
 L  = 100                            #Length of the domain [m]
-ux = 14                             #X-gap between aquifer and leakage [m]
+ux = 13                             #X-gap between aquifer and leakage [m]
 uy = 14                             #Y-gap between aquifer and leakage [m]
 Wi = 100                            #Width of the domain [m]
 X0 = np.linspace(0, -1.5, 16)       #""                         -L*exp(X0)
@@ -126,6 +126,10 @@ os.system(f"{flow} inputs/co2.data --output-dir=results " + \
 #oxygen concentration [kg/m^3], and urea concentration [kg/m^3]]. Before each
 #injection of the solutions in the phases we inject only water for a very short
 #time [0.01 hour] to ease the convergence of the solution.
+#This injection strategy results in the full remediation of the leakage path
+#(i.e., the percentage of leake CO2 is zero) and it is identical to the ad-hoc
+#one in the quarter_single_leak example (the injection rate is scaled up by a
+#factor of four.
 injestra.append([0.01, 8e-2, 0, 0, 0])
 injestra.append([15., 8e-2, 0.01, 0, 0])
 injestra.append([2., 8e-2, 0, 0, 0])
@@ -319,14 +323,14 @@ plt.plot(t0, Lg[0][:], \
 plt.plot(t1, Lg[1][:], \
      color = [1, 0.5, 0], linewidth = lw, linestyle = "-", label = "After MICP")
 plt.xlabel('t [days]')
-plt.ylabel('Leaked $CO_{2}$ mass/injected $CO_{2}$ mass [%]')
+plt.ylabel('Leaked $CO_{2}$/injected $CO_{2}$ [%]')
 plt.grid()
 plt.legend(loc = 'upper left')
 plt.savefig('results/co2mass_comparison.eps', format='eps')
 plt.show()
 
 #{
-#Copyright 2021, NORCE Norwegian Research Centre AS, Computational
+#Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
 #Geosciences and Modeling.
 
 #This file is part of the py-micp module.

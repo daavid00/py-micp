@@ -149,7 +149,7 @@ os.system(f"{flow} inputs/top.data --output-dir=results" + \
        " --solver-max-time-step-in-days=0.01 --enable-vtk-output=true & wait\n")
 
 #{
-#Copyright 2021, NORCE Norwegian Research Centre AS, Computational
+#Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
 #Geosciences and Modeling.
 
 #This file is part of the py-micp module.

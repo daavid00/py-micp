@@ -42,7 +42,7 @@ day     = 86400     #Seconds in a day [s]
 tolclg  = 1e-4      #Tolerance before clogging to stop the simulation
 QCO2    = 1e-4      #Injection rate (CO2) [m^3/s]
 dtCO2   = 10        #Time step to print CO2 results [d]
-NCO2    = 50        #Number of time steps to run the simulation [-]
+NCO2    = 40        #Number of time steps to run the simulation [-]
 
 #Delete previous inputs and results
 os.system('rm -rf inputs & rm -rf results & wait')
@@ -61,7 +61,7 @@ H  = 30                             #Height of the domain [m]
 ht = 5                              #Height of the top aquifer [m]
 hl = 5                              #Height of the lower aquifer [m]
 L  = 100                            #Length of the domain [m]
-ux = 18                             #X-gap between aquifer and leakage [m]
+ux = 19                             #X-gap between aquifer and leakage [m]
 uy = 11                             #Y-gap between aquifer and leakage [m]
 Wi = 100                            #Width of the domain [m]
 X0 = np.linspace(0, 21, 22)         #Discretization of the x-dir X0
@@ -119,43 +119,67 @@ os.system(f"{flow} inputs/co2.data --output-dir=results " + \
 #[injection time [h], injection rate [m^3/s], microbial concentration [kg/m^3],
 #oxygen concentration [kg/m^3], and urea concentration [kg/m^3]]. Before each
 #injection of the solutions in the phases we inject only water for a very short
-#time [0.01 hour] to ease the convergence of the solution.
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([15., 2e-2, 0.01, 0, 0])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([100., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 0])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
-injestra.append([0.01, 2e-2, 0, 0, 0])
-injestra.append([30., 2e-2, 0, 0.04, 60.])
-injestra.append([2., 2e-2, 0, 0, 0])
-injestra.append([30., 0, 0, 0, 0])
+#time [0.01 hour] to ease the convergence of the solution. These are the
+#optimized times as described in the paper.
+injestra.append([4.9741738643, 2.0e-02, 0.01, 0.00, 0.0])
+injestra.append([1.8569768807, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([16.8679007499, 0.0e+00, 0.00, 0.00, 0.0])
+injestra.append([0.0100000000, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([34.5885190714, 2.0e-02, 0.00, 0.04, 0.0])
+injestra.append([0.7109093213, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([15.5769647997, 0.0e+00, 0.00, 0.00, 0.0])
+injestra.append([0.0100000000, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([9.3216581719, 2.0e-02, 0.00, 0.00, 60.0])
+injestra.append([1.3289601747, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([1.4926508975, 0.0e+00, 0.00, 0.00, 0.0])
+injestra.append([0.0100000000, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([104.5146345223, 2.0e-02, 0.00, 0.04, 60.0])
+injestra.append([0.5698767876, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([2.3927137750, 0.0e+00, 0.00, 0.00, 0.0])
+injestra.append([0.0100000000, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([1.1655264747, 2.0e-02, 0.00, 0.04, 60.0])
+injestra.append([1.5793312120, 2.0e-02, 0.00, 0.00, 0.0])
+injestra.append([2.5154764605, 0.0e+00, 0.00, 0.00, 0.0])
+
+#This injection strategy results in the full remediation of the leakage path
+#(i.e., the percentage of leake CO2 is zero). It was obtained using an ad-hoc
+#approach (i.e., running the simulations and adding additional injection phases)
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([15., 2e-2, 0.01, 0, 0])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([100., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 0])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
+#injestra.append([0.01, 2e-2, 0, 0, 0])
+#injestra.append([30., 2e-2, 0, 0.04, 60.])
+#injestra.append([2., 2e-2, 0, 0, 0])
+#injestra.append([30., 0, 0, 0, 0])
 
 # We store the maximum injected oxygen and urea concentrations. They are use
 # so that the computed oxygen and urea values are within these during the
@@ -325,14 +349,14 @@ plt.plot(t0, Lg[0][:], \
 plt.plot(t1, Lg[1][:], \
      color = [1, 0.5, 0], linewidth = lw, linestyle = "-", label = "After MICP")
 plt.xlabel('t [days]')
-plt.ylabel('Leaked $CO_{2}$ mass/injected $CO_{2}$ mass [%]')
+plt.ylabel('Leaked $CO_{2}$/injected $CO_{2}$ [%]')
 plt.grid()
 plt.legend(loc = 'upper left')
 plt.savefig('results/co2mass_comparison.eps', format='eps')
 plt.show()
 
 #{
-#Copyright 2021, NORCE Norwegian Research Centre AS, Computational
+#Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
 #Geosciences and Modeling.
 
 #This file is part of the py-micp module.

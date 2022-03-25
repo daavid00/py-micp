@@ -131,7 +131,7 @@ os.system(f"{flow} inputs/directional.data --output-dir=results" + \
                                            " --enable-vtk-output=true & wait\n")
 
 #{
-#Copyright 2021, NORCE Norwegian Research Centre AS, Computational
+#Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
 #Geosciences and Modeling.
 
 #This file is part of the py-micp module.

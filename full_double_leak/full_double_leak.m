@@ -1,5 +1,5 @@
 function full_double_leak(H, ht, hl, L, ux1, ux2, uy1, uy2, Wi, X, Y, Z)
-run '~/Github/mrst-2020b/startup.m'
+run '~/Github/mrst-2021b/startup.m'
 %  Write a grid structure with two straight leakage paths in the file
 %  'full_double_leak.grdecl' in the 'inputs' folder for simulation in
 %  OPM Flow
@@ -91,7 +91,7 @@ run '~/Github/mrst-2020b/startup.m'
     writeGRDECL(grdecl2, 'inputs/full_double_leak.grdecl');
 end
 %{
-Copyright 2021, NORCE Norwegian Research Centre AS, Computational
+Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
 Geosciences and Modeling.
 This file is part of the py-micp module.
 py-micp is free software: you can redistribute it and/or modify
