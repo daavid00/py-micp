@@ -1,7 +1,8 @@
 <h2 align="center">py-micp</h2>
-<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-blue.svg"></a>
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-<img src="py-micp.gif" width="900" height="400">
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-blue.svg"></a>
+
+<img src="py-micp.gif" width="900" height="250">
 
 This repository contains runscripts to simulate microbially induced calcite
 precipitation treatment in different domains; in addition to CO2 injection
