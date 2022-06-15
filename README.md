@@ -4,7 +4,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <img src="py-micp.gif" width="900" height="250">
 
-# py-micp: An open-source framework to perform microbially induced calcite precipitation and CO2 assessment studies at the field scale
+# py-micp: An Open-Source Simulation Workflow for Field-Scale Application of Microbially Induced Calcite Precipitation Technology for Leakage Remediation
 
 This repository contains runscripts to simulate microbially induced calcite
 precipitation (MICP) treatment in different domains; in addition to CO2 injection
