@@ -1,5 +1,5 @@
 function quarter_diagonal_leak(H, ht, hl, L, ux, uy, Wi, X, Y, Z)
-run '~/Github/mrst-2021b/startup.m'
+run '~/Github/mrst-2022a/startup.m'
 %  Write a grid structure with a diagonal leakage path in the file
 %  'quarter_diagonal_leak.grdecl' in the 'inputs' folder for simulation in
 %  OPM Flow

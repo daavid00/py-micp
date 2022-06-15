@@ -1,5 +1,5 @@
 function quarter_double_leak(H, ht, hl, L, ux1, ux2, uy1, uy2, Wi, X, Y, Z)
-run '~/Github/mrst-2021b/startup.m'
+run '~/Github/mrst-2022a/startup.m'
 %  Write a grid structure with two straight leakage paths in the file
 %  'quarter_double_leak.grdecl' in the 'inputs' folder for simulation in
 %  OPM Flow

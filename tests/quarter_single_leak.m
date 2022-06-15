@@ -1,11 +1,11 @@
-function full_single_leak(H, ht, hl, L, ux, uy, Wi, X, Y, Z)
-run '~/Github/mrst-2022a/startup.m'
+function quarter_single_leak(H, ht, hl, L, ux, uy, Wi, X, Y, Z)
+run '/home/runner/work/py-micp/py-micp/mrst-2022a/startup.m'
 %  Write a grid structure with a straight leakage path in the file
-%  'full_single_leak.grdecl' in the 'inputs' folder for simulation in
+%  'quarter_single_leak.grdecl' in the 'inputs' folder for simulation in
 %  OPM Flow
 %
 % SYNOPSIS:
-%       full_single_leak(H, ht, hl, L, ux, uy, Wi, X, Y, Z)
+%       quarter_single_leak(H, ht, hl, L, ux, uy, Wi, X, Y, Z)
 %
 % PARAMETERS:
 %   H        - Scalar cell data (height of the domain).
@@ -29,7 +29,7 @@ run '~/Github/mrst-2022a/startup.m'
 %   Z        - Array cell data (discretization of the z-direction).
 %
 % NOTES:
-%   Function `full_single_leak` only creates the straigth leakage path
+%   Function `quarter_single_leak` only creates the straigth leakage path
 %
 %   consisting of one cell aperture.
 %
@@ -38,7 +38,7 @@ run '~/Github/mrst-2022a/startup.m'
 %   X = [0 : 21 L * exp(-1.5 : 0.05: 0)];
 %   Y = [0 : 21 Wi * exp(-1.5 : 0.05: 0)];
 %   Z = [0 : 5 5.5 : 0.5 : H - 5 H - 4 : H];
-%   full_single_leak(H, 5, 5, L, 20, 20, Wi, X, Y, Z)
+%   quarter_single_leak(H, 5, 5, L, 20, 20, Wi, X, Y, Z)
 
     xx = size(X, 2) - 1;
     yy = size(Y, 2) - 1;
@@ -82,7 +82,7 @@ run '~/Github/mrst-2022a/startup.m'
                                      ((GcD1 + 1) * (GcD2 + 1) + 1) + 1, 3);
     end
     grdecl2.ZCORN(end - GcD1 * GcD2 * 4 + 1 : end) = Gnc(end, 3);
-    writeGRDECL(grdecl2, 'inputs/full_single_leak.grdecl');
+    writeGRDECL(grdecl2, 'inputs/quarter_single_leak.grdecl');
 end
 %{
 Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
