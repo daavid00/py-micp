@@ -70,23 +70,23 @@ XXq = []
 YYq = []
 ZZ = []
 for k in range(len(Z0)):
-    ZZ.append(Z0[k])
+    ZZ.append(float(Z0[k]))
 for k in range(len(Z1)):
-    ZZ.append(Z1[k])
+    ZZ.append(float(Z1[k]))
 for k in range(len(Z2)):
-    ZZ.append(Z2[k])
+    ZZ.append(float(Z2[k]))
 for i in range(len(Xf0)):
-    XXf.append(-L * np.exp(Xf0[i]))
+    XXf.append(float(-L * np.exp(Xf0[i])))
 for i in range(len(Xf1)):
-    XXf.append(Xf1[i])
+    XXf.append(float(Xf1[i]))
 for i in range(len(Xf2)):
-    XXf.append(L * np.exp(Xf2[i]))
+    XXf.append(float(L * np.exp(Xf2[i])))
 for j in range(len(Yf0)):
-    YYf.append(-Wi * np.exp(Yf0[j]))
+    YYf.append(float(-Wi * np.exp(Yf0[j])))
 for j in range(len(Yf1)):
-    YYf.append(Yf1[j])
+    YYf.append(float(Yf1[j]))
 for j in range(len(Yf2)):
-    YYf.append(Wi * np.exp(Yf2[j]))
+    YYf.append(float(Wi * np.exp(Yf2[j])))
 xxf = len(Xf0) + len(Xf1) + len(Xf2) - 1
 yyf = len(Yf0) + len(Yf1) + len(Yf2) - 1
 zz = len(Z0) + len(Z1) + len(Z2) - 1
@@ -185,7 +185,7 @@ os.system(
 )
 
 # {
-# Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
+# Copyright 2021-2025, NORCE Research AS, Computational
 # Geosciences and Modeling.
 
 # This file is part of the py-micp module.
@@ -195,7 +195,7 @@ os.system(
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# ad-wa is distributed in the hope that it will be useful,
+# py-micp is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.

@@ -48,6 +48,7 @@ NCO2 = 40  # Number of time steps to run the simulation [-]
 os.system("rm -rf inputs & rm -rf results & wait")
 os.system("mkdir inputs & mkdir results & wait")
 
+
 # Define the porosity-permeability functions (aquifer and leakage)
 def perma(bio, cal):
     return (
@@ -85,19 +86,19 @@ XX = []
 YY = []
 ZZ = []
 for i in range(len(X0)):
-    XX.append(X0[i])
+    XX.append(float(X0[i]))
 for i in range(len(X1)):
-    XX.append(L * np.exp(X1[i]))
+    XX.append(float(L * np.exp(X1[i])))
 for j in range(len(Y0)):
-    YY.append(Y0[j])
+    YY.append(float(Y0[j]))
 for j in range(len(Y1)):
-    YY.append(Wi * np.exp(Y1[j]))
+    YY.append(float(Wi * np.exp(Y1[j])))
 for k in range(len(Z0)):
-    ZZ.append(Z0[k])
+    ZZ.append(float(Z0[k]))
 for k in range(len(Z1)):
-    ZZ.append(Z1[k])
+    ZZ.append(float(Z1[k]))
 for k in range(len(Z2)):
-    ZZ.append(Z2[k])
+    ZZ.append(float(Z2[k]))
 xx = len(X0) + len(X1) - 1
 yy = len(Y0) + len(Y1) - 1
 zz = len(Z0) + len(Z1) + len(Z2) - 1
@@ -437,7 +438,7 @@ plt.savefig("results/co2mass_comparison.eps", format="eps")
 plt.show()
 
 # {
-# Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
+# Copyright 2021-2025, NORCE Research AS, Computational
 # Geosciences and Modeling.
 
 # This file is part of the py-micp module.
@@ -447,7 +448,7 @@ plt.show()
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 
-# ad-wa is distributed in the hope that it will be useful,
+# py-micp is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
