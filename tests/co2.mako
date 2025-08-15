@@ -30,36 +30,27 @@ UNIFOUT
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
-
 INIT
 
 INCLUDE
-'quarter_single_leak.grdecl' /
+GRID.INC /
 
 PORO
-% for i in range(len(biof)):
-${round(float(str(phi - biof[i] - calc[i]).lstrip('[').rstrip(']')), 4)}
+% for value in poro:
+${value}\
 % endfor
 /
 
 PERMX
-% for i in range(len(perm)):
-${round(float(str(perm[i]).lstrip('[').rstrip(']')), 4)}
+% for value in perm:
+${value}\
 % endfor
 /
 
-PERMY
-% for i in range(len(perm)):
-${round(float(str(perm[i]).lstrip('[').rstrip(']')), 4)}
-% endfor
+COPY 
+PERMX PERMY /
+PERMX PERMZ /
 /
-
-PERMZ
-% for i in range(len(perm)):
-${round(float(str(perm[i]).lstrip('[').rstrip(']')), 4)}
-% endfor
-/
-
 ----------------------------------------------------------------------------
 PROPS
 ----------------------------------------------------------------------------
@@ -107,26 +98,26 @@ RPTRST
 BASIC=2 /
 
 WELSPECS
-'INJE01' 'INJE' 1 1 1* 'GAS' 0.15/
-'PROD01' 'PROD' ${xx} ${yy} 1* 'OIL' 0.15/
-'PROD02' 'PROD' ${xx - 1} ${yy} 1* 'OIL' 0.15/
-'PROD03' 'PROD' ${xx} ${yy - 1} 1* 'OIL' 0.15/
+INJE01 INJE 1 1 1* 'GAS' 0.15/
+PROD01 PROD ${xx} ${yy} 1* 'OIL' 0.15/
+PROD02 PROD ${xx - 1} ${yy} 1* 'OIL' 0.15/
+PROD03 PROD ${xx} ${yy - 1} 1* 'OIL' 0.15/
 /
 
 COMPDAT
-'INJE01' 1 1 ${zz - il + 1} ${zz} 'OPEN' 1* 1*/
-'PROD01' ${xx} ${yy} ${zz - il + 1} ${zz} 'OPEN' 1* 1*/
-'PROD02' ${xx - 1} ${yy} 1 ${it} 'OPEN' 1* 1*/
-'PROD03' ${xx} ${yy - 1} 1 ${it} 'OPEN' 1* 1*/
+INJE01 1 1 ${zz - il + 1} ${zz} OPEN 2* /
+PROD01 ${xx} ${yy} ${zz - il + 1} ${zz} OPEN 2* /
+PROD02 ${xx - 1} ${yy} 1 ${it} OPEN 2* /
+PROD03 ${xx} ${yy - 1} 1 ${it} OPEN 2* /
 /
 
 WCONINJE
-'INJE01' 'GAS' 'OPEN' 'RATE' ${QCO2 * 86400}  1* 600/
+INJE01 'GAS' OPEN RATE ${QCO2 * 86400}  1* 600 /
 /
 WCONPROD
-'PROD01' 'OPEN'  'BHP' 5* 2/
-'PROD02' 'OPEN'  'BHP' 5* 2/
-'PROD03' 'OPEN'  'BHP' 5* 2/
+PROD01 OPEN  BHP 5* 2 /
+PROD02 OPEN  BHP 5* 2 /
+PROD03 OPEN  BHP 5* 2 /
 /
 TSTEP
 ${NCO2}*${dtCO2}
