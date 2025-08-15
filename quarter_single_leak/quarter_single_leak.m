@@ -85,7 +85,7 @@ run '~/Github/mrst-2022a/startup.m'
     writeGRDECL(grdecl2, 'inputs/quarter_single_leak.grdecl');
 end
 %{
-Copyright 2021-2022, NORCE Norwegian Research Centre AS, Computational
+Copyright 2021-2025, NORCE Research AS, Computational
 Geosciences and Modeling.
 This file is part of the py-micp module.
 py-micp is free software: you can redistribute it and/or modify
