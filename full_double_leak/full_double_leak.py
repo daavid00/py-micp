@@ -7,8 +7,10 @@
 # Knuutila, H.K. (Eds) Short Papers from the 11th International Trondheim CCS
 # conference, ISBN: 978-82-536-1714-5, 284-290.
 
-# Set the full path to the flow executable
-flow = "~/Opm/master/build/opm-simulators/bin/flow"
+# Set the full path to the flow executable and flags
+flow = "flow --initial-time-step-in-days=0.0001 --enable-opm-rst-file=true"
+# The output dir and vtk needs to be defined for the files to be postprocess
+flow += " --output-dir=results --enable-vtk-output=true"
 
 # Import python dependencies
 import os
@@ -16,54 +18,90 @@ import meshio
 import numpy as np
 from mako.template import Template
 from matplotlib import pyplot as plt
+from scipy.interpolate import interp1d
 
 # Set the model parameters
 rhob = 35.0  # Density (biofilm) [kg/m^3]
 rhoc = 2710.0  # Density (calcite) [kg/m^3]
 rhow = 1045  # Density (water) [kg/m^3]
 kstr = 2.6e-10  # Detachment rate [m/(Pa s)]
-crit = 0.1  # Critical porosity [-]
-eta = 3.0  # Fitting factor [-]
 ko = 2e-5  # Half-velocity coefficient (oxygen) [kg/m^3]
 ku = 21.3  # Half-velocity constant (urea) [kg/m^3]
 mu = 4.17e-5  # Maximum specific growth rate [1/s]
 muu = 0.0161  # Maximum rate of urease utilization [1/s]
 ka = 8.51e-7  # Microbial attachment rate [1/s]
 kd = 3.18e-7  # Microbial death rate [1/s]
-kmin = 1e-20  # Minimum permeability [m^2]
 F = 0.5  # Oxygen consumption factor [-]
 Y = 0.5  # Yield growth coefficient [-]
 muw = 2.54e-4  # Water viscoscity [Pa s]
 Ka = 1e-14  # Aquifer permeability [m^2]
 Kl = 2e-14  # Leakage permeability [m^2]
 phi = 0.15  # Porosity [-]
-md = 9.87e-16  # Milli darcy [mD]
+md = 9.87e-16  # From m^2 to milli darcy [mD]
 day = 86400  # Seconds in a day [s]
-tolclg = 1e-4  # Tolerance before clogging to stop the simulation
 QCO2 = 4e-4  # Injection rate (CO2) [m^3/s]
 dtCO2 = 10  # Time step to print CO2 results [d]
 NCO2 = 40  # Number of time steps to run the simulation [-]
+detexp = 0.58  # Exponent for the norm of the detahcment rate [-]
+yurca = 1.67  # Yielc urea to calcite [-]
 
 # Delete previous inputs and results
-os.system("rm -rf inputs & rm -rf results & wait")
-os.system("mkdir inputs & mkdir results & wait")
+os.system("rm -rf decks & rm -rf results & wait")
+os.system("mkdir decks & mkdir results & wait")
 
 
 # Define the porosity-permeability functions (aquifer and leakage)
-def perma(bio, cal):
-    return (
-        (Ka * ((phi - bio - cal - crit) / (phi - crit)) ** eta + kmin)
-        * Ka
-        / (md * (Ka + kmin))
-    )
+# OLD formulation (release v2024.10)
+# def perma(bio, cal):
+#     return (
+#         (Ka * ((phi - bio - cal - crit) / (phi - crit)) ** eta + kmin)
+#         * Ka
+#         / (md * (Ka + kmin))
+#     )
+# def perml(bio, cal):
+#     return (
+#         (Kl * ((phi - bio - cal - crit) / (phi - crit)) ** eta + kmin)
+#         * Kl
+#         / (md * (Kl + kmin))
+#     )
+
+# NOW (after 2025.04) we use the PERMFACT table, see the OPM Flow manual
+porofac = [0, 0.4, 0.6, 0.9, 1]
+permfac = [0.005, 0.005, 0.01, 0.1, 1]
 
 
-def perml(bio, cal):
-    return (
-        (Kl * ((phi - bio - cal - crit) / (phi - crit)) ** eta + kmin)
-        * Kl
-        / (md * (Kl + kmin))
-    )
+def compact_format(values):
+    """
+    Use the 'n*x' notation to write repited values to save storage
+
+    Args:
+        values (list): List with the variable values
+
+    Returns:
+        values (list): List with the compacted variable values
+
+    """
+    n, value0, tmp = 0, float(values[0]), []
+    for value in values:
+        if value0 != float(value) or len(values) == 1:
+            if value0 == 0:
+                tmp.append(f"{n}*0 " if n > 1 else "0 ")
+            elif value0.is_integer():
+                tmp.append(f"{n}*{int(value0)} " if n > 1 else f"{int(value0)} ")
+            else:
+                tmp.append(f"{n}*{value0} " if n > 1 else f"{value0} ")
+            n = 1
+            value0 = float(value)
+        else:
+            n += 1
+    if value0 == float(values[-1]) and len(values) > 1:
+        if value0 == 0:
+            tmp.append(f"{n}*0 " if n > 1 else "0 ")
+        elif value0.is_integer():
+            tmp.append(f"{n}*{int(value0)} " if n > 1 else f"{int(value0)} ")
+        else:
+            tmp.append(f"{n}*{value0} " if n > 1 else f"{value0} ")
+    return tmp
 
 
 # Create the grid
@@ -121,6 +159,7 @@ os.system(
 )
 
 # Create variables used in this script
+poro = phi * np.ones(xyz, dtype=float)
 biof = [0] * xyz
 calc = [0] * xyz
 injestra = []
@@ -133,6 +172,8 @@ VOLUM = []
 
 # Set and run the CO2 simulation before MICP treatment
 perm[xx * yy * it : xx * yy * (zz - il)] = [Kl / md] * (xx * yy * (zz - il - it))
+permw = compact_format("".join(f"{val} " for val in perm).split())
+porow = compact_format("".join(f"{val} " for val in poro).split())
 mytemplate = Template(filename="co2.mako")
 var = {
     "biof": biof,
@@ -143,20 +184,17 @@ var = {
     "it": it,
     "iy": iy,
     "NCO2": NCO2,
-    "perm": perm,
-    "phi": phi,
+    "perm": permw,
+    "poro": porow,
     "QCO2": QCO2,
     "xx": xx,
     "yy": yy,
     "zz": zz,
 }
 FilledTemplate = mytemplate.render(**var)
-with open("inputs/co2.data", "w") as f:
+with open("decks/CO2.DATA", "w") as f:
     f.write(FilledTemplate)
-os.system(
-    f"{flow} inputs/co2.data --output-dir=results "
-    + " --enable-vtk-output=true --initial-time-step-in-days=0.0001 & wait\n"
-)
+os.system(f"{flow} decks/CO2.DATA")
 
 # Define injection strategy
 # [injection time [h], injection rate [m^3/s], microbial concentration [kg/m^3],
@@ -167,6 +205,7 @@ os.system(
 # (i.e., the percentage of leake CO2 is zero) and it is identical to the ad-hoc
 # one in the quarter_double_leak example (the injection rate is scaled up by a
 # factor of four.
+# NOW (after 2025.04) this strategy seems not good, the task is to find one
 injestra.append([0.01, 8e-2, 0, 0, 0])
 injestra.append([15.0, 8e-2, 0.01, 0, 0])
 injestra.append([2.0, 8e-2, 0, 0, 0])
@@ -212,26 +251,15 @@ injestra.append([30.0, 8e-2, 0, 0.04, 60.0])
 injestra.append([2.0, 8e-2, 0, 0, 0])
 injestra.append([30.0, 0, 0, 0, 0])
 
-# We store the maximum injected oxygen and urea concentrations. They are use
-# so that the computed oxygen and urea values are within these during the
-# solution step
-comax = 0
-cumax = 0
-for i in range(len(injestra)):
-    comax = max(injestra[i][3], comax)
-    cumax = max(injestra[i][4], cumax)
-
 # Read the input file
 mytemplate = Template(filename="micp.mako")
 
 # Set and run the MICP simulation
 var = {
-    "biof": biof,
-    "calc": calc,
-    "crit": crit,
-    "comax": comax,
-    "cumax": cumax,
-    "eta": eta,
+    "porofac": porofac,
+    "permfac": permfac,
+    "detexp": detexp,
+    "yurca": yurca,
     "F": F,
     "il": il,
     "ix": ix,
@@ -239,19 +267,17 @@ var = {
     "injestra": injestra,
     "ka": ka,
     "kd": kd,
-    "kmin": kmin,
     "ko": ko,
     "kstr": kstr,
     "ku": ku,
     "mu": mu,
     "muu": muu,
     "muw": muw,
-    "perm": perm,
-    "phi": phi,
+    "perm": permw,
+    "poro": porow,
     "rhob": rhob,
     "rhoc": rhoc,
     "rhow": rhow,
-    "tolclg": tolclg,
     "Wc": Wc,
     "xx": xx,
     "Y": Y,
@@ -259,16 +285,13 @@ var = {
     "zz": zz,
 }
 FilledTemplate = mytemplate.render(**var)
-with open("inputs/micp.data", "w") as f:
+with open("decks/micp.DATA", "w") as f:
     f.write(FilledTemplate)
-os.system(
-    f"{flow} inputs/micp.data --output-dir=results"
-    + " --initial-time-step-in-days=0.0001 --solver-max-time-step-in-days=0.01"
-    + " --enable-vtk-output=true & wait\n"
-)
+os.system(f"{flow} decks/MICP.DATA")
 
 # Update the porosity and permeability after MICP treatment
-with open("inputs/full_double_leak.grdecl", "r") as f:
+permred = interp1d(porofac, permfac, fill_value="extrapolate")
+with open("decks/GRID.INC", "r") as f:
     list_of_lines = f.readlines()
 act = list_of_lines[-int(xyz / 20.0) - 1 :]
 for k in range(len(act)):
@@ -285,20 +308,22 @@ for row in mesh.cell_data["biofilm fraction"]:
     b = row
 biof[: xx * yy * it] = b[: xx * yy * it]
 calc[: xx * yy * it] = c[: xx * yy * it]
-perm[: xx * yy * it] = perma(b[: xx * yy * it], c[: xx * yy * it])
+perm[: xx * yy * it] = Ka * permred(phi - b[: xx * yy * it] - c[: xx * yy * it])
 j = 0
 for k in range(it, zz - il):
     for l in range(0, xx * yy):
         if ACTNUM[xx * yy * k + l] == 1:
             biof[xx * yy * k + l] = b[xx * yy * it + j]
             calc[xx * yy * k + l] = c[xx * yy * it + j]
-            perm[xx * yy * k + l] = perml(b[xx * yy * it + j], c[xx * yy * it + j])
+            perm[xx * yy * k + l] = Kl * permred(
+                phi - b[xx * yy * it + j] - c[xx * yy * it + j]
+            )
             j = j + 1
 i = xx * yy * zz - xx * yy * il
 I = len(b) - xx * yy * il
 biof[i:] = b[I:]
 calc[i:] = c[I:]
-perm[i:] = perma(b[I:], c[I:])
+perm[i:] = Ka * permred(phi - b[I:] - c[I:])
 
 # Set and run the CO2 simulation after MICP treatment
 mytemplate = Template(filename="co2.mako")
@@ -311,20 +336,17 @@ var = {
     "it": it,
     "iy": iy,
     "NCO2": NCO2,
-    "perm": perm,
-    "phi": phi,
+    "perm": permw,
+    "poro": porow,
     "QCO2": QCO2,
     "xx": xx,
     "yy": yy,
     "zz": zz,
 }
 FilledTemplate = mytemplate.render(**var)
-with open("inputs/co2micp.data", "w") as f:
+with open("decks/co2micp.DATA", "w") as f:
     f.write(FilledTemplate)
-os.system(
-    f"{flow} inputs/co2micp.data --output-dir=results"
-    + " --enable-vtk-output=true --initial-time-step-in-days=0.0001 & wait\n"
-)
+os.system(f"{flow} decks/CO2MICP.DATA")
 
 # Obtain the times for the .vtu results and save them in 't' in days
 with open("results/CO2.pvd", "r") as f:
@@ -415,10 +437,10 @@ for j in range(len(t1)):
     else:
         a.append(sum(CO2[:II] * p[:II] * VOLUM[:II]))
 Lg.append(a)
-print(Lg[0][-1])
-print(Lg[1][-1])
+print(f"Percentage of leake CO2:{Lg[0][-1][0]}")
+print(f"Percentage of leake CO2 after MICP treatment:{Lg[1][-1][0]}")
 
-# Plot the results over time and save them as co2mass_comparison.eps
+# Plot the results over time and save them as co2mass_comparison.png
 lw = 5
 plt.figure(figsize=(5, 4), dpi=256)
 plt.rc("font", size=9)
@@ -434,7 +456,7 @@ plt.xlabel("t [days]")
 plt.ylabel("Leaked $CO_{2}$/injected $CO_{2}$ [%]")
 plt.grid()
 plt.legend(loc="upper left")
-plt.savefig("results/co2mass_comparison.eps", format="eps")
+plt.savefig("results/co2mass_comparison.png")
 plt.show()
 
 # {

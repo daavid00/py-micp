@@ -1,4 +1,5 @@
+black
 mako
 matplotlib
 meshio
-black
+scipy

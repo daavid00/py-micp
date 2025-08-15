@@ -3,18 +3,16 @@
 ----------------------------------------------------------------------------
 RUNSPEC
 ----------------------------------------------------------------------------
-
 DIMENS
 ${xx} ${yy} ${zz} /
 
 WATER
-
 MICP
 
 METRIC
 
 START
-18  'Jan' 1991 /
+1 JAN 2025 /
 
 EQLDIMS
 /
@@ -26,70 +24,58 @@ TABDIMS
 /
 
 UNIFOUT
-
 ----------------------------------------------------------------------------
 GRID
 ----------------------------------------------------------------------------
-
 INIT
 
 INCLUDE
-'quarter_single_leak.grdecl' /
+GRID.INC /
 
 PORO
-% for i in range(len(biof)):
-${round(float(str(phi - biof[i] - calc[i]).lstrip('[').rstrip(']')), 4)}
+% for value in poro:
+${value}\
 % endfor
 /
 
 PERMX
-% for i in range(len(perm)):
-${round(float(str(perm[i]).lstrip('[').rstrip(']')), 4)}
+% for value in perm:
+${value}\
 % endfor
 /
 
-PERMY
-% for i in range(len(perm)):
-${round(float(str(perm[i]).lstrip('[').rstrip(']')), 4)}
-% endfor
+COPY 
+PERMX PERMY /
+PERMX PERMZ /
 /
-
-PERMZ
-% for i in range(len(perm)):
-${round(float(str(perm[i]).lstrip('[').rstrip(']')), 4)}
-% endfor
-/
-
 ----------------------------------------------------------------------------
 PROPS
 ----------------------------------------------------------------------------
 PERMFACT
 -- PORO PERM
 -- FACTOR FACTOR
-0.0 0.005
-0.4 0.005
-0.6  0.01
-0.9   0.1
-1.0     1 /
+% for pofa,pefa in zip(porofac,permfac):
+${pofa} ${pefa}
+% endfor
+/
 
 PVTW
-277.0      1     0.0  ${muw / 1e-3}  0.0 /
+277 1.038 4.67E-05 ${muw / 1e-3} 0 /
 
 ROCK
-277.0 1E-6 /
+276.0 1.95E-04 /
 
 DENSITY
-${rhow}/
+${rhow} /
 
 BIOFPARA
-${rhob} ${kd * 86400} ${mu * 86400} ${ko} ${Y} ${F} ${ka * 86400} ${kstr * 1e-3} 0.58 ${muu * 86400} ${ku} ${rhoc} 1.67 /
-
+-- BDEN DEATH GROWTH HALF YIELD FACTOR ATACH DETRAT DETEXP UREA HALF CDEN YUTOC
+${rhob} ${kd * 86400} ${mu * 86400} ${ko} ${Y} ${F} ${ka * 86400} ${kstr * 1e-3} ${detexp} ${muu * 86400} ${ku} ${rhoc} ${yurca} /
 ----------------------------------------------------------------------------
 SOLUTION
 ----------------------------------------------------------------------------
-
-PRESSURE
-${xx * yy * zz}*270 /
+EQUIL
+0 200 -1 0 0 0 1 1 0 /
 
 SMICR
 ${xx * yy * zz}*0 /
@@ -105,52 +91,45 @@ ${xx * yy * zz}*0 /
 
 SCALC
 ${xx * yy * zz}*0 /
-
 ----------------------------------------------------------------------------
 SCHEDULE
 ----------------------------------------------------------------------------
-
 RPTRST
 BASIC=2 /
 
 WELSPECS
-'INJE01' 'INJE' ${ix} ${iy} 1* 'WATER' 0.15/
-'INJE02' 'INJE' ${ix} ${iy} 1* 'WATER' 0.15/
-'INJE03' 'INJE' ${ix} ${iy} 1* 'WATER' 0.15/
-'INJE04' 'INJE' ${ix} ${iy} 1* 'WATER' 0.15/
-'PROD01' 'PROD' ${xx} ${yy} 1* 'WATER' 0.15/
+INJE01 INJE ${ix} ${iy} 1* WATER 0.15 /
+INJE02 INJE ${ix} ${iy} 1* WATER 0.15 /
+INJE03 INJE ${ix} ${iy} 1* WATER 0.15 /
+INJE04 INJE ${ix} ${iy} 1* WATER 0.15 /
+PROD01 PROD ${xx} ${yy} 1* WATER 0.15 /
 /
 
 COMPDAT
-'INJE01' ${ix} ${iy} ${zz - il + 1} ${zz - il + Wc} 'OPEN' 1* 1*/
-'INJE02' ${ix} ${iy} ${zz - il + Wc + 1} ${zz - il + 2 * Wc} 'OPEN' 1* 1*/
-'INJE03' ${ix} ${iy} ${zz - il + 2 * Wc + 1} ${zz - il + 3 * Wc} 'OPEN' 1* 1*/
-'INJE04' ${ix} ${iy} ${zz - il + 3 * Wc + 1} ${zz} 'OPEN' 1* 1*/
-'PROD01' ${xx} ${yy} 1 ${zz} 'OPEN' 1* 1*/
+INJE01 ${ix} ${iy} ${zz - il + 1} ${zz - il + Wc} OPEN 2* /
+INJE02 ${ix} ${iy} ${zz - il + Wc + 1} ${zz - il + 2 * Wc} OPEN 2* /
+INJE03 ${ix} ${iy} ${zz - il + 2 * Wc + 1} ${zz - il + 3 * Wc} OPEN 2* /
+INJE04 ${ix} ${iy} ${zz - il + 3 * Wc + 1} ${zz} OPEN 2* /
+PROD01 ${xx} ${yy} 1 ${zz} OPEN 2* /
 /
 
 % for i in range(len(injestra)):
 WCONINJE
-'INJE01' 'WATER' ${'OPEN' if injestra[i][1] > 0 else 'SHUT'}
-'RATE' ${f"{injestra[i][1] * 86400. * float(Wc) / il : E}"}  1* 10000/
-'INJE02' 'WATER' ${'OPEN' if injestra[i][1] > 0 else 'SHUT'}
-'RATE' ${f"{injestra[i][1] * 86400. * float(Wc) / il : E}"}  1* 10000/
-'INJE03' 'WATER' ${'OPEN' if injestra[i][1] > 0 else 'SHUT'}
-'RATE' ${f"{injestra[i][1] * 86400. * float(Wc) / il : E}"}  1* 10000/
-'INJE04' 'WATER' ${'OPEN' if injestra[i][1] > 0 else 'SHUT'}
-'RATE' ${f"{injestra[i][1] * 86400. * float(il - 3 * Wc) / il : E}"} 1* 10000/
+INJE01 WATER ${'OPEN' if injestra[i][1] > 0 else 'SHUT'} RATE ${f"{injestra[i][1] * 86400. * float(Wc) / il :E}"} 1* 480 /
+INJE02 WATER ${'OPEN' if injestra[i][1] > 0 else 'SHUT'} RATE ${f"{injestra[i][1] * 86400. * float(Wc) / il :E}"} 1* 480 /
+INJE03 WATER ${'OPEN' if injestra[i][1] > 0 else 'SHUT'} RATE ${f"{injestra[i][1] * 86400. * float(Wc) / il :E}"} 1* 480 /
+INJE04 WATER ${'OPEN' if injestra[i][1] > 0 else 'SHUT'} RATE ${f"{injestra[i][1] * 86400. * float(il - 3 * Wc) / il :E}"} 1* 480 /
 /
 WCONPROD
-'PROD01' ${'OPEN' if injestra[i][1] > 0 else 'SHUT'} 'BHP' 5* 2/
+PROD01 ${'OPEN' if injestra[i][1] > 0 else 'SHUT'} BHP 5* 2 /
 /
 WMICP
-'INJE01' ${injestra[i][2]} 0 ${injestra[i][4]}/
-'INJE02' 0 0 0/
-'INJE03' 0 ${injestra[i][3]} 0/
-'INJE04' 0 0 0/
+INJE01 ${injestra[i][2]} 0 ${injestra[i][4]} /
+INJE02 0 0 0 /
+INJE03 0 ${injestra[i][3]} 0 /
+INJE04 0 0 0 /
 /
 TSTEP
-${injestra[i][0] * 3600. / 86400}
-/
+${injestra[i][0] * 3600. / 86400} /
 
 % endfor

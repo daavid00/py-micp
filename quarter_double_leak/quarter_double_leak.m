@@ -1,7 +1,7 @@
 function quarter_double_leak(H, ht, hl, L, ux1, ux2, uy1, uy2, Wi, X, Y, Z)
-run '~/Github/mrst-2022a/startup.m'
+run '/Users/dmar/Github/py-micp/MRST/startup.m'
 %  Write a grid structure with two straight leakage paths in the file
-%  'quarter_double_leak.grdecl' in the 'inputs' folder for simulation in
+%  'GRID.INC' in the 'decks' folder for simulation in
 %  OPM Flow
 %
 % SYNOPSIS:
@@ -67,7 +67,7 @@ run '~/Github/mrst-2022a/startup.m'
         grdecl.ACTNUM(xx * yy * k + iy1 * xx + ix1, 1) = 1;
         grdecl.ACTNUM(xx * yy * k + iy2 * xx + ix2, 1) = 1;
     end
-    % Create the .GRDECL file
+    % Create the GRID.INC file
     grdecl2 = grdecl;
     j = 1;
     for k = 0 : GcD2
@@ -88,7 +88,7 @@ run '~/Github/mrst-2022a/startup.m'
                                      ((GcD1 + 1) * (GcD2 + 1) + 1) + 1, 3);
     end
     grdecl2.ZCORN(end - GcD1 * GcD2 * 4 + 1 : end) = Gnc(end, 3);
-    writeGRDECL(grdecl2, 'inputs/quarter_double_leak.grdecl');
+    writeGRDECL(grdecl2, 'decks/GRID.INC');
 end
 %{
 Copyright 2021-2025, NORCE Research AS, Computational
@@ -98,7 +98,7 @@ py-micp is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-ad-micp is distributed in the hope that it will be useful,
+py-micp is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
