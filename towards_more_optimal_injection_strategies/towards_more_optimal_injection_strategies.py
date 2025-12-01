@@ -87,8 +87,8 @@ xxf = len(Xf0) + len(Xf1) + len(Xf2) - 1
 yyf = len(Yf0) + len(Yf1) + len(Yf2) - 1
 zz = len(Z0) + len(Z1) + len(Z2) - 1
 xyzf = xxf * yyf * zz
-ix = abs(np.transpose(XXf)).argmin() + 1
-iy = abs(np.transpose(YYf)).argmin() + 1
+ix = np.abs(np.transpose(XXf)).argmin() + 1
+iy = np.abs(np.transpose(YYf)).argmin() + 1
 it = len(np.transpose(ZZ)[tuple([np.transpose(ZZ) < ht])])
 il = len(np.transpose(ZZ)[tuple([np.transpose(ZZ) > H - hl])])
 os.system(

@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.13']
+        python-version: ['3.8']
         os: [ubuntu-latest]
         
     runs-on: ${{ matrix.os }}
@@ -37,14 +37,13 @@ jobs:
         
     - name: Install GNU Octave
       run: |
-        sudo apt install snapd
+        sudo apt-get update
+        sudo apt-get install snapd
         sudo snap install octave
     
     - name: Download MRST
       run: |
-        wget https://www.sintef.no/globalassets/project/mrst/mrst-2022a.zip
-        unzip mrst-2022a.zip
-        pwd
+        git clone https://github.com/SINTEF-AppliedCompSci/MRST.git
     
     - name: Install Flow Simulator
       run: |
@@ -59,3 +58,13 @@ jobs:
       run: |
         pushd ./tests
         python3 quarter_single_leak.py
+
+    - name: Check if the test succeded
+      run: |
+        file="/home/runner/work/py-micp/py-micp/tests/results/co2mass_comparison.png"
+        if [[ -f "$file" ]]; then
+          echo "py-micp succeeded"
+        else
+          echo "py-micp failed"
+          exit 1
+        fi
