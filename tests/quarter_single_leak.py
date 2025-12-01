@@ -138,8 +138,8 @@ xx = len(X0) + len(X1) - 1
 yy = len(Y0) + len(Y1) - 1
 zz = len(Z0) + len(Z1) + len(Z2) - 1
 xyz = xx * yy * zz
-ix = abs(np.transpose(XX)).argmin() + 1
-iy = abs(np.transpose(YY)).argmin() + 1
+ix = np.abs(np.transpose(XX)).argmin() + 1
+iy = np.abs(np.transpose(YY)).argmin() + 1
 it = len(np.transpose(ZZ)[tuple([np.transpose(ZZ) < ht])])
 il = len(np.transpose(ZZ)[tuple([np.transpose(ZZ) > H - hl])])
 os.system(
@@ -235,9 +235,17 @@ with open("results/MICP.pvd", "r") as f:
     list_of_lines = f.readlines()
 ss = list_of_lines[-3]
 mesh = meshio.read(f"results/MICP-{int(ss[-13:-8]):05d}.vtu")
-for row in mesh.cell_data["calcite fraction"]:
+for row in mesh.cell_data["calcite volume fraction"]:
     c = row.flatten()
-for row in mesh.cell_data["biofilm fraction"]:
+for (
+    key
+) in (
+    mesh.cell_data.keys()
+):  # Flow 2025.10 prints biofilm voulme, this has been fixed in Flow master
+    if "biofilm" in key:
+        biokey = key
+        break
+for row in mesh.cell_data[biokey]:
     b = row.flatten()
 biof[: xx * yy * it] = b[: xx * yy * it]
 calc[: xx * yy * it] = c[: xx * yy * it]
@@ -346,9 +354,9 @@ for j in range(len(t0)):
         p = row
     CO2M = QCO2 * t0[j] * day
     if t0[j] > 0:
-        a.append(100.0 * sum(CO2[:II] * p[:II] * VOLUM[:II]) / CO2M)
+        a.append(100.0 * np.sum(CO2[:II] * p[:II] * VOLUM[:II]) / CO2M)
     else:
-        a.append(sum(CO2[:II] * p[:II] * VOLUM[:II]))
+        a.append(np.sum(CO2[:II] * p[:II] * VOLUM[:II]))
 Lg.append(a)
 a = []
 for j in range(len(t1)):
@@ -359,12 +367,12 @@ for j in range(len(t1)):
         p = row
     CO2M = QCO2 * t1[j] * day
     if t1[j] > 0:
-        a.append(100.0 * sum(CO2[:II] * p[:II] * VOLUM[:II]) / CO2M)
+        a.append(100.0 * np.sum(CO2[:II] * p[:II] * VOLUM[:II]) / CO2M)
     else:
-        a.append(sum(CO2[:II] * p[:II] * VOLUM[:II]))
+        a.append(np.sum(CO2[:II] * p[:II] * VOLUM[:II]))
 Lg.append(a)
-print(f"Percentage of leake CO2:{Lg[0][-1][0]}")
-print(f"Percentage of leake CO2 after MICP treatment:{Lg[1][-1][0]}")
+print(f"Percentage of leake CO2:{Lg[0][-1]}")
+print(f"Percentage of leake CO2 after MICP treatment:{Lg[1][-1]}")
 
 # Plot the results over time and save them as co2mass_comparison.png
 lw = 5

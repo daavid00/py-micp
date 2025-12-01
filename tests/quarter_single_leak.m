@@ -1,5 +1,5 @@
 function quarter_single_leak(H, ht, hl, L, ux, uy, Wi, X, Y, Z)
-run '/home/runner/work/py-micp/py-micp/mrst-2022a/startup.m'
+run '/home/runner/work/py-micp/py-micp/MRST/startup.m'
 %  Write a grid structure with a straight leakage path in the file
 %  'GRID.INC' in the 'decks' folder for simulation in
 %  OPM Flow

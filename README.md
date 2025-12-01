@@ -1,5 +1,5 @@
-[![Build Status](https://github.com/daavid00/py-micp/actions/workflows/py-micp.yml/badge.svg)](https://github.com/daavid00/py-micp/actions/workflows/py-micp.yml)
-<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20to%203.13-blue.svg"></a>
+[![Build Status](https://github.com/daavid00/py-micp/actions/workflows/CI.yml/badge.svg)](https://github.com/daavid00/py-micp/actions/workflows/CI.yml)
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20to%203.14-blue.svg"></a>
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/444088296.svg)](https://doi.org/10.5281/zenodo.16880620)
@@ -28,12 +28,12 @@ models in OPM Flow.
 
 ## Installation
 You will first need to install/download
-* [Flow](https://opm-project.org) (tested with Flow==release/2025.04)
-* [Python](https://www.python.org/downloads/) (tested with Python==3.13)
-* [GNU Octave](https://www.gnu.org/software/octave/download) (tested with GNU Octave==9.4.0)
+* [Flow](https://opm-project.org) (tested with Flow==2025.10)
+* [Python](https://www.python.org/downloads/) (tested with Python==3.14)
+* [GNU Octave](https://www.gnu.org/software/octave/download) (tested with GNU Octave==10.3.0)
 * [MRST](https://www.sintef.no/projectweb/mrst/download/) (tested with MRST==2025a)
 
-You will also need to install some python packages see ```requirements.txt``` 
+You will also need to install some python packages, see ```requirements.txt``` 
 for a complete list. You can install all the required python packages in a 
 virtual environment with the following commands:
 
@@ -52,10 +52,8 @@ pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-You can install OPM Flow from binary packages on Ubuntu Linux 22.04 or 24.04 and Red
-Hat Enterprise Linux 7. Installing instruction is found [here](https://opm-project.org/?page_id=245). 
-The OPM webpage also has instruction for installation on other systems. For building it from source (including macOS),
-you could also [look here](https://opm.github.io/pyopmspe11/installation.html#opm-flow). 
+See this [_installation_](https://opm.github.io/pyopmspe11/installation.html#opm-flow) for further details on building OPM Flow from the master branches in Linux, Windows (via [_WSL_](https://learn.microsoft.com/en-us/windows/wsl/)), and macOS.
+
 Once you have installed OPM Flow, GNU Octave, and downloaded MRST:
 
 * Edit line 11 of the python scripts (e.g., 'quarter_single_leak.py') with the
@@ -65,7 +63,7 @@ full path to your 'flow' executable (e.g., '/Users/dmar/opm/build/opm-simulators
 full path to your MRST 'startup.m' file (e.g., '/Users/dmar/mrst-2025a/startup.m').
 
 Tip: See the [CI.yml](https://github.com/daavid00/py-micp/blob/main/.github/workflows/CI.yml) for installation of 
-all dependencies and running the test in _py-micp_.
+all dependencies in Ubuntu 24.04 and running the test in _py-micp_.
 
 ## Running the scripts
 * From the terminal, e.g., for the quarter_single_leak system:
@@ -83,8 +81,8 @@ strategies for leakage mitigation using microbially induced calcite
 precipitation. https://arxiv.org/abs/2201.00669
 
 Refer to the [_v2024.10 release_](https://github.com/daavid00/py-micp/releases/tag/v2024.10) for the code that was used in that paper. This is relevant 
-since in the OPM Flow version 2025.04, the MICP implementation was refactored, resulting in changes in the deck keywords (e.g., now we use BIOFPARA instead 
-of MICPPARA): see the corresponding OPM Flow version of the [_OPM Flow manual_](https://opm-project.org/?page_id=955) for details.
+since in the OPM Flow version 2025.04, the MICP implementation was refactored, resulting in changes in the deck keywords (e.g., now we use `BIOFPARA` instead 
+of `MICPPARA`); see the corresponding OPM Flow version of the [_OPM Flow manual_](https://opm-project.org/?page_id=955) for details.
 
 ## About py-micp
 The _py-micp_ package was funded by the [_Eﬃcient models for microbially induced calcite precipitation as a seal for CO2 storage (MICAP) project_](https://gassnova.no/app/uploads/sites/4/2022/02/Sluttrapport-MICAP.pdf) [project number 268390].
@@ -98,6 +96,7 @@ Below are some tools that might be of interest; check ‘em out 🙂.
 * pyopmspe11: A Python framework using OPM Flow for the CSP SPE11 benchmark project (https://github.com/OPM/pyopmspe11).
 * pycopm: An open-source tool to tailor OPM Flow geological models (https://github.com/cssr-tools/pycopm).
 * plopm: Quick generation of PNGs, GIFs, and VTKs from a OPM Flow type model (https://github.com/cssr-tools/plopm).
+* pofff: An open-source image-based history-matching framework for the FluidFlower benchmark study using OPM Flow (https://github.com/cssr-tools/pofff).
 * pyopmnearwell: A Python framework to simulate near well dynamics using OPM Flow (https://github.com/cssr-tools/pyopmnearwell).
 * expreccs: A Python framework using OPM Flow to simulate regional and site reservoirs for CO2 storage (https://github.com/cssr-tools/expreccs).
 * pymm: An open-source image-based framework for CFD in microsystems (https://github.com/cssr-tools/pymm).
