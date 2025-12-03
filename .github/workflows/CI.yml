@@ -44,6 +44,8 @@ jobs:
     - name: Download MRST
       run: |
         git clone https://github.com/SINTEF-AppliedCompSci/MRST.git
+        pushd MRST
+        git checkout 2025b
     
     - name: Install Flow Simulator
       run: |
@@ -56,7 +58,7 @@ jobs:
       
     - name: Run the test
       run: |
-        pushd ./tests
+        pushd tests
         python3 quarter_single_leak.py
 
     - name: Check if the test succeded

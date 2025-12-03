@@ -6,7 +6,7 @@ authors:
   orcid: "https://orcid.org/0000-0002-3343-1005"
 title: "py-micp: An Open-Source Simulation Workflow for Field-Scale Application of
   Microbially Induced Calcite Precipitation Technology for Leakage Remediation"
-version: 2024.10
+year: 2025
 identifiers:
-  - type: doi
-    value: 10.5281/zenodo.16880621
+doi: 10.5281/zenodo.16880621
+url: "https://github.com/daavid00/py-micp"
