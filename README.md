@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/daavid00/py-micp/actions/workflows/CI.yml/badge.svg)](https://github.com/daavid00/py-micp/actions/workflows/CI.yml)
-<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.8%20to%203.14-blue.svg"></a>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%20to%203.14-blue.svg"></a>
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/444088296.svg)](https://doi.org/10.5281/zenodo.16880620)
@@ -28,10 +28,10 @@ models in OPM Flow.
 
 ## Installation
 You will first need to install/download
-* [Flow](https://opm-project.org) (tested with Flow==2025.10)
+* [Flow](https://opm-project.org) (tested with Flow==2026.04)
 * [Python](https://www.python.org/downloads/) (tested with Python==3.14)
-* [GNU Octave](https://www.gnu.org/software/octave/download) (tested with GNU Octave==10.3.0)
-* [MRST](https://www.sintef.no/projectweb/mrst/download/) (tested with MRST==2025a)
+* [GNU Octave](https://www.gnu.org/software/octave/download) (tested with GNU Octave==11.1.0)
+* [MRST](https://www.sintef.no/projectweb/mrst/download/) (tested with MRST==2026a)
 
 You will also need to install some python packages, see ```requirements.txt``` 
 for a complete list. You can install all the required python packages in a 
@@ -56,8 +56,8 @@ See this [_installation_](https://opm.github.io/pyopmspe11/installation.html#opm
 
 Once you have installed OPM Flow, GNU Octave, and downloaded MRST:
 
-* Edit line 11 of the python scripts (e.g., 'quarter_single_leak.py') with the
-full path to your 'flow' executable (e.g., '/Users/dmar/opm/build/opm-simulators/bin/flow') and simulator flags.
+* Edit line 26 of the python scripts (e.g., 'quarter_single_leak.py') with the
+full path to your 'flow' executable (e.g., '/Users/dmar/opm/build/opm-simulators/bin/flow', or simply 'flow') and simulator flags.
 
 * Edit line 2 of the GNU Octave scripts (e.g., 'quarter_single_leak.m') with the
 full path to your MRST 'startup.m' file (e.g., '/Users/dmar/mrst-2025a/startup.m').

@@ -8,33 +8,33 @@ on:
    
 jobs:
   run-py-micp-local:
-    timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.8']
-        os: [ubuntu-latest]
-        
-    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      pull-requests: write
+    timeout-minutes: 10        
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.10"
         
     - name: Install python requirements
       run: |
         pip install -r requirements.txt
+        pip install -r dev-requirements.txt
         
     - name: Check code style 
       run: |
-        black --check ./
-        
+        black --target-version py312 ./
+        pylint ./ --ignore-paths="vpy-micp/","MRST","test_outputs"
+        ruff check ./
+
     - name: Install GNU Octave
       run: |
         sudo apt-get update
@@ -45,7 +45,7 @@ jobs:
       run: |
         git clone https://github.com/SINTEF-AppliedCompSci/MRST.git
         pushd MRST
-        git checkout 2025b
+        git checkout 2026a
     
     - name: Install Flow Simulator
       run: |
@@ -56,17 +56,6 @@ jobs:
         sudo apt-get install mpi-default-bin
         sudo apt-get install libopm-simulators-bin
       
-    - name: Run the test
+    - name: Run the tests
       run: |
-        pushd tests
-        python3 quarter_single_leak.py
-
-    - name: Check if the test succeded
-      run: |
-        file="/home/runner/work/py-micp/py-micp/tests/results/co2mass_comparison.png"
-        if [[ -f "$file" ]]; then
-          echo "py-micp succeeded"
-        else
-          echo "py-micp failed"
-          exit 1
-        fi
+        pytest --basetemp=test_outputs --exitfirst tests/ --mrst_startup /home/runner/work/py-micp/py-micp/MRST/startup.m

@@ -126,6 +126,9 @@ vpy-micp
 .dmypy.json
 dmypy.json
 
+# ruff
+.ruff_cache/
+
 # Pyre type checker
 .pyre/
 
@@ -133,3 +136,4 @@ dmypy.json
 MRST
 playground
 debugging
+test_outputs

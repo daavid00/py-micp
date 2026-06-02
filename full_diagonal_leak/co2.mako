@@ -1,4 +1,4 @@
--- Copyright (C) 2021-2025 NORCE Research AS
+-- Copyright (C) 2021-2026 NORCE Research AS
 ----------------------------------------------------------------------------
 RUNSPEC
 ----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ PROD08 ${xx} ${yy - 1} 1 ${it} OPEN 2* /
 /
 
 WCONINJE
-INJE01 GAS OPEN RATE ${QCO2 * 86400} 1* 480 /
+INJE01 GAS OPEN RATE ${qco2 * 86400} 1* 480 /
 /
 WCONPROD
 PROD01 OPEN BHP 5* 2 /
@@ -127,5 +127,5 @@ PROD07 OPEN BHP 5* 2 /
 PROD08 OPEN BHP 5* 2 /
 /
 TSTEP
-${NCO2}*${dtCO2} /
+${nco2}*${dtco2} /
 
