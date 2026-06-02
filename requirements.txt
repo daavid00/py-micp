@@ -1,5 +1,4 @@
-black
-mako
-matplotlib
-meshio
-scipy
+mako<=1.3.12
+matplotlib<=3.10.9
+meshio<=5.3.5
+scipy<=1.17.1

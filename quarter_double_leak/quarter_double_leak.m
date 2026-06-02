@@ -1,97 +1,100 @@
-function quarter_double_leak(H, ht, hl, L, ux1, ux2, uy1, uy2, Wi, X, Y, Z)
-run '/Users/dmar/Github/py-micp/MRST/startup.m'
+function quarter_double_leak(h, ht, hl, le, ux1, ux2, uy1, uy2, wi, x, y, z)
+mrst_startup_path = '/Users/dmar/Github/py-micp/MRST/startup.m';
+if exist(mrst_startup_path, 'file') ~= 2
+    error('MRST startup file not found: %s', mrst_startup_path);
+end
+run(mrst_startup_path)
 %  Write a grid structure with two straight leakage paths in the file
 %  'GRID.INC' in the 'decks' folder for simulation in
 %  OPM Flow
 %
 % SYNOPSIS:
-%       quarter_double_leak(H, ht, hl, L, ux1, ux2, uy1, uy2, Wi, X, Y, Z)
+%       quarter_double_leak(h, ht, hl, le, ux1, ux2, uy1, uy2, wi, x, y, z)
 %
 % PARAMETERS:
-%   H    - Scalar cell data (height of the domain).
+%   h    - Scalar cell data (height of the domain).
 %
 %   ht   - Scalar cell data (height of the top aquifer).
 %
 %   hl   - Scalar cell data (height of the lower aquifer).
 %
-%   L    - Scalar cell data (length of the domain).
+%   le    - Scalar cell data (length of the domain).
 %
-%   ux1  - Scalar cell data (X-gap between leak path and left side).
+%   ux1  - Scalar cell data (x-gap between leak path and left side).
 %
-%   ux2  - Scalar cell data (X-gap between leak path and left side).
+%   ux2  - Scalar cell data (x-gap between leak path and left side).
 %
-%   uy1  - Scalar cell data (Y-gap between leak path and lower side).
+%   uy1  - Scalar cell data (y-gap between leak path and lower side).
 %
-%   uy2  - Scalar cell data (Y-gap between leak path and lower side).
+%   uy2  - Scalar cell data (y-gap between leak path and lower side).
 %
-%   Wi   - Scalar cell data (width of the domain).
+%   wi   - Scalar cell data (width of the domain).
 %
-%   X    - Array cell data (discretization of the x-direction).
+%   x    - Array cell data (discretization of the x-direction).
 %
-%   Y    - Array cell data (discretization of the y-direction).
+%   y    - Array cell data (discretization of the y-direction).
 %
-%   Z    - Array cell data (discretization of the z-direction).
+%   z    - Array cell data (discretization of the z-direction).
 %
 % NOTES:
 %   Function `quarter_double_leak` only creates two straigth leakage paths
 %   consisting of one cell aperture.
 %
 % EXAMPLE:
-%   L = 100; H = 30; Wi = 10;
-%   X = [0 : 21 L * exp(-1.5 : 0.05: 0)];
-%   Y = [0 : 21 Wi * exp(-1.5 : 0.05: 0)];
-%   Z = [0 : 5 5.5 : 0.5 : H - 5 H - 4 : H];
-%   quarter_double_leak(H, 5, 5, L, 11, 18, 11, 18, Wi, X, Y, Z)
+%   le = 100; h = 30; wi = 10;
+%   x = [0 : 21 le * exp(-1.5 : 0.05: 0)];
+%   y = [0 : 21 wi * exp(-1.5 : 0.05: 0)];
+%   z = [0 : 5 5.5 : 0.5 : h - 5 h - 4 : h];
+%   quarter_double_leak(h, 5, 5, le, 11, 18, 11, 18, wi, x, y, z)
 
-    xx = size(X, 2) - 1;
-    yy = size(Y, 2) - 1;
-    zz = size(Z, 2) - 1;
-    G = tensorGrid(X, Y, Z);
-    GcD1 = G.cartDims(1);
-    GcD2 = G.cartDims(2);
-    GcD3 = G.cartDims(3);
-    Gnc = G.nodes.coords;
-    ix1 = sum(X < ux1);        % Locate the number of x-cells from the leak
-    ix2 = sum(X < ux2);        % Locate the number of x-cells from the leak
-    iy1 = sum(Y < uy1);        % Locate the number of y-cells from the leak
-    iy2 = sum(Y < uy2);        % Locate the number of y-cells from the leak
-    it = sum(Z < ht);          % Locate the number of top cells
-    il = sum(Z > H - hl);      % Locate the number of lower cells
-    grdecl = simpleGrdecl([xx, yy, zz], 0, 'flat', true(), ...
-                    'undisturbed', true(), 'physDims', [2 * L, 2 * Wi, H]);
+    cell_count_x = numel(x) - 1;
+    cell_count_y = numel(y) - 1;
+    cell_count_z = numel(z) - 1;
+    leak_cell_x1 = sum(x < ux1);        % Locate the number of x-cells from the leak
+    leak_cell_x2 = sum(x < ux2);        % Locate the number of x-cells from the leak
+    leak_cell_y1 = sum(y < uy1);        % Locate the number of y-cells from the leak
+    leak_cell_y2 = sum(y < uy2);        % Locate the number of y-cells from the leak
+    top_cell_count = sum(z < ht);       % Locate the number of top cells
+    lower_cell_count = sum(z > h - hl); % Locate the number of lower cells
+    grdecl = simpleGrdecl([cell_count_x, cell_count_y, cell_count_z], 0, 'flat', true(), 'undisturbed', true(), 'physDims', [2 * le, 2 * wi, h]);
     % Set in ACTNUM as 0 the removed cells
-    for i = xx * yy * it + 1 : xx * yy * zz - xx *yy * il
-        grdecl.ACTNUM(i, 1) = 0;
+    middle_start = cell_count_x * cell_count_y * top_cell_count + 1;
+    middle_stop = cell_count_x * cell_count_y * cell_count_z - cell_count_x * cell_count_y * lower_cell_count;
+    if middle_start <= middle_stop
+        grdecl.ACTNUM(middle_start : middle_stop, 1) = 0;
     end
-    for k = it : zz - il
-        grdecl.ACTNUM(xx * yy * k + iy1 * xx + ix1, 1) = 1;
-        grdecl.ACTNUM(xx * yy * k + iy2 * xx + ix2, 1) = 1;
-    end
+    leak_layers = top_cell_count : cell_count_z - lower_cell_count;
+    leak_indices1 = cell_count_x * cell_count_y * leak_layers + leak_cell_y1 * cell_count_x + leak_cell_x1;
+    leak_indices2 = cell_count_x * cell_count_y * leak_layers + leak_cell_y2 * cell_count_x + leak_cell_x2;
+    leak_indices = unique([leak_indices1, leak_indices2]);
+    grdecl.ACTNUM(leak_indices, 1) = 1;
     % Create the GRID.INC file
     grdecl2 = grdecl;
-    j = 1;
-    for k = 0 : GcD2
-        for i = 1 : GcD1 + 1
-            grdecl2.COORD(j) = Gnc(i, 1);
-            grdecl2.COORD(j + 1) = Gnc(k * (GcD1 + 1) +1, 2);
-            grdecl2.COORD(j + 2) = Gnc(1, 3);
-            grdecl2.COORD(j + 3) = Gnc(i, 1);
-            grdecl2.COORD(j + 4) = Gnc(k * (GcD1 + 1) + 1, 2);
-            grdecl2.COORD(j + 5) = Gnc(end, 3);
-            j = j + 6;
-        end
+    node_count_x = cell_count_x + 1;
+    node_count_y = cell_count_y + 1;
+    pillar_count = node_count_x * node_count_y;
+    x_coords = repmat(x(:), node_count_y, 1);
+    y_coords = kron(y(:), ones(node_count_x, 1));
+    grdecl2.COORD = zeros(6 * pillar_count, 1);
+    grdecl2.COORD(1 : 6 : end) = x_coords;
+    grdecl2.COORD(2 : 6 : end) = y_coords;
+    grdecl2.COORD(3 : 6 : end) = z(1);
+    grdecl2.COORD(4 : 6 : end) = x_coords;
+    grdecl2.COORD(5 : 6 : end) = y_coords;
+    grdecl2.COORD(6 : 6 : end) = z(end);
+    zcorn_face_size = cell_count_x * cell_count_y * 4;
+    zcorn_layer_size = cell_count_x * cell_count_y * 8;
+    grdecl2.ZCORN = zeros(size(grdecl2.ZCORN));
+    grdecl2.ZCORN(1 : zcorn_face_size) = z(1);
+    if cell_count_z > 1
+        middle_zcorn = reshape(repmat(z(2 : cell_count_z), zcorn_layer_size, 1), [], 1);
+        grdecl2.ZCORN(zcorn_face_size + 1 : end - zcorn_face_size) = middle_zcorn;
     end
-    grdecl2.ZCORN(1 : GcD1 * GcD2 * 4) = Gnc(1, 3);
-    for i = 1 : GcD3 - 1
-        grdecl2.ZCORN(GcD1 * GcD2 * 4 + 1 + GcD1 * GcD2 * 8 * (i - 1) : ...
-                     GcD1 * GcD2 * 8 * i + GcD1 * GcD2 * 4) = Gnc((i) * ...
-                                     ((GcD1 + 1) * (GcD2 + 1) + 1) + 1, 3);
-    end
-    grdecl2.ZCORN(end - GcD1 * GcD2 * 4 + 1 : end) = Gnc(end, 3);
+    grdecl2.ZCORN(end - zcorn_face_size + 1 : end) = z(end);
     writeGRDECL(grdecl2, 'decks/GRID.INC');
 end
 %{
-Copyright 2021-2025, NORCE Research AS, Computational
+Copyright 2021-2026, NORCE Research AS, Computational
 Geosciences and Modeling.
 This file is part of the py-micp module.
 py-micp is free software: you can redistribute it and/or modify

@@ -1,0 +1,5 @@
+black<=26.5.1
+opm<=2026.4
+pylint<=4.0.5
+pytest-xdist<=3.8.0
+ruff<=0.15.15
