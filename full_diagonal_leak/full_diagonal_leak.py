@@ -16,6 +16,7 @@ import shutil
 import subprocess
 import xml.etree.ElementTree as element_tree
 from pathlib import Path
+
 import meshio
 import numpy as np
 from mako.template import Template
@@ -350,7 +351,7 @@ def full_diagonal_leak():
         raise ValueError("No VTU datasets found in results/MICP.pvd")
     mesh = meshio.read(micp_dataset_paths[-1])
     c = flatten_cell_data(mesh, "calcite volume fraction")
-    biokey = next((key for key in mesh.cell_data.keys() if "biofilm" in key), None)
+    biokey = next((key for key in mesh.cell_data if "biofilm" in key), None)
     if biokey is None:
         raise KeyError("No biofilm cell_data entry found in MICP VTU file")
     b = flatten_cell_data(mesh, biokey)

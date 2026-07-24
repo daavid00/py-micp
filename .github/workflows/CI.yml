@@ -1,36 +1,25 @@
 name: Run py-micp
 
 on:
- push:
-   branches:
-     - main
  pull_request:
    
 jobs:
   run-py-micp-local:
     permissions:
       contents: read
-      pull-requests: write
     timeout-minutes: 10        
-    runs-on: ubuntu-24.04
-    container:
-      image: ubuntu:26.04
+    runs-on: ubuntu-26.04
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Install system dependencies
+      - name: Install OPM Flow and Octave
         run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y \
-            python3 python3-pip python3-venv \
-            build-essential git curl ca-certificates \
-            software-properties-common \
-            octave \
-            mpi-default-bin
-
-          ln -s /usr/bin/python3 /usr/bin/python || true
+          sudo apt-get update
+          sudo apt-get install software-properties-common mpi-default-bin octave
+          sudo apt-add-repository ppa:opm/ppa
+          sudo apt-get update
+          sudo apt-get install libopm-simulators-bin
           
       - name: Install python requirements
         run: |
@@ -41,9 +30,9 @@ jobs:
           pip install -r requirements.txt
           pip install -r dev-requirements.txt
           
-      - name: Check code style 
+      - name: Check code style and linting
         run: |
-          black --target-version py312 ./
+          black --target-version py314 ./ --check
           pylint ./ --ignore-paths="vpy-micp/","MRST","test_outputs"
           ruff check ./
       
@@ -52,14 +41,7 @@ jobs:
           git clone https://github.com/SINTEF-AppliedCompSci/MRST.git
           cd MRST
           git checkout 2026a
-      
-      - name: Install Flow Simulator
-        run: |
-          apt-get update
-          apt-add-repository ppa:opm/ppa
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y libopm-simulators-bin
         
       - name: Run the tests
         run: |
-          pytest --basetemp=test_outputs --exitfirst tests/ --mrst_startup "$GITHUB_WORKSPACE/MRST/startup.m"
+          pytest --basetemp=test_outputs --mrst_startup "$GITHUB_WORKSPACE/MRST/startup.m" tests/ --exitfirst
