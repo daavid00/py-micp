@@ -28,9 +28,9 @@ models in OPM Flow.
 
 ## Installation
 You will first need to install/download
-* [Flow](https://opm-project.org) (tested with Flow==2026.04)
-* [Python](https://www.python.org/downloads/) (tested with Python==3.14)
-* [GNU Octave](https://www.gnu.org/software/octave/download) (tested with GNU Octave==11.1.0)
+* [Flow](https://opm-project.org) (tested with Flow==2026.07)
+* [Python](https://www.python.org/downloads/) (tested with Python==3.14.6)
+* [GNU Octave](https://www.gnu.org/software/octave/download) (tested with GNU Octave==11.3.0)
 * [MRST](https://www.sintef.no/projectweb/mrst/download/) (tested with MRST==2026a)
 
 You will also need to install some python packages, see ```requirements.txt``` 

@@ -8,9 +8,10 @@ import pathlib
 import shutil
 import subprocess
 from pathlib import Path
+
 import numpy as np
-from opm.io.ecl import EGrid as OpmGrid
 from opm.io.ecl import EclFile as OpmFile
+from opm.io.ecl import EGrid as OpmGrid
 
 EPS_PORV = 1e-1
 EPS = 1e-6
